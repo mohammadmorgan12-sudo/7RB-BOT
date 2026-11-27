@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090806">
+  <title>7RB WALLET</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --panel: rgba(18, 16, 12, .72);
+      --button: rgba(35, 24, 9, .78);
+      --button-hover: rgba(65, 45, 17, .88);
+      --text: #fffaf0;
+      --muted: #c8bda9;
+      --accent: #d4ad64;
+      --border: rgba(255,255,255,.09);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(ellipse at top, rgba(95,67,26,.34), transparent 55%),
+        linear-gradient(145deg, #080807, #17130c 55%, #050505);
+      padding: 18px 14px 30px;
+    }
+    .app { max-width: 620px; margin: 0 auto; }
+    .header {
+      text-align: center;
+      padding: 16px 12px 20px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      margin-bottom: 16px;
+    }
+    .logo { font-size: 34px; }
+    h1 { margin: 5px 0; font-size: 23px; letter-spacing: .5px; }
+    .subtitle { color: var(--muted); font-size: 13px; }
+    .section-title {
+      margin: 18px 4px 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .wallet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+    button {
+      color: var(--text);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      transition: .15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .wallet {
+      min-height: 68px;
+      border-radius: 17px;
+      background: var(--button);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 12px 8px;
+      font-size: 15px;
+    }
+    .wallet:active, .action:active { transform: scale(.98); }
+    .wallet.selected {
+      border-color: var(--accent);
+      background: rgba(105, 76, 30, .62);
+      box-shadow: 0 0 0 1px rgba(212,173,100,.2) inset;
+    }
+    .wide { grid-column: 1 / -1; }
+    .panel {
+      margin-top: 14px;
+      padding: 15px;
+      border-radius: 19px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .selected-name {
+      color: var(--accent);
+      font-weight: 800;
+      margin-bottom: 10px;
+      min-height: 22px;
+    }
+    input {
+      width: 100%;
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,.15);
+      outline: none;
+      padding: 14px 12px;
+      color: white;
+      background: rgba(0,0,0,.45);
+      font-size: 15px;
+      direction: ltr;
+      text-align: left;
+    }
+    input::placeholder { color: #a99f90; }
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 11px;
+    }
+    .action {
+      min-height: 52px;
+      border-radius: 14px;
+      padding: 10px;
+      background: var(--button);
+      font-size: 14px;
+    }
+    .primary {
+      background: rgba(117, 78, 22, .78);
+      border-color: rgba(212,173,100,.3);
+    }
+    .danger { background: rgba(82, 20, 16, .7); }
+    .status {
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      margin-top: 12px;
+    }
+    .foot {
+      color: #9c927f;
+      text-align: center;
+      font-size: 11px;
+      padding: 18px 5px 4px;
+    }
+    @media (max-width: 360px) {
+      .wallet { font-size: 13px; }
+      .actions { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div class="logo">💼</div>
+      <h1>7RB WALLET</h1>
+      <div class="subtitle">محفظتك لحفظ عناوين الدفع ومشاركتها بسهولة</div>
+    </header>
+
+    <div class="section-title">👇 اختر طريقة الدفع</div>
+
+    <section class="wallet-grid" id="walletGrid">
+      <button class="wallet" data-currency="syriatel">Syriatel Cash</button>
+      <button class="wallet" data-currency="mtn">MTN Cash</button>
+      <button class="wallet" data-currency="sham">Sham Cash</button>
+      <button class="wallet" data-currency="kaza">Kaza Wallet</button>
+      <button class="wallet" data-currency="usdt">USDT (BEP-20)</button>
+      <button class="wallet" data-currency="ton">Ton</button>
+      <button class="wallet" data-currency="binance">Binance Pay</button>
+      <button class="wallet" data-currency="cwallet">C-Wallet</button>
+      <button class="wallet wide" data-currency="coinex">Coin-Ex</button>
+    </section>
+
+    <section class="panel">
+      <div class="selected-name" id="selectedName">اختر محفظة من الأعلى</div>
+      <input id="address" type="text" maxlength="200"
+             placeholder="أدخل عنوان المحفظة هنا" autocomplete="off">
+      <div class="actions">
+        <button class="action primary" id="saveBtn">💾 حفظ / تعديل</button>
+        <button class="action" id="deleteBtn">❌ حذف المحفظة</button>
+        <button class="action wide" id="viewBtn">📂 عرض جميع البيانات</button>
+        <button class="action danger wide" id="deleteAllBtn">🗑 مسح جميع البيانات</button>
+        <button class="action wide" id="adminBtn">⚙️ لوحة الأدمن</button>
+      </div>
+      <div class="status" id="status">بياناتك خاصة بحسابك على تيليجرام.</div>
+    </section>
+
+    <div class="foot">7RB WALLET • واجهة إدارة العناوين</div>
+  </main>
+
+  <script>
+    const tg = window.Telegram && window.Telegram.WebApp;
+    const names = {
+      syriatel: "Syriatel Cash",
+      mtn: "MTN Cash",
+      sham: "Sham Cash",
+      kaza: "Kaza Wallet",
+      usdt: "USDT (BEP-20)",
+      ton: "Ton",
+      binance: "Binance Pay",
+      cwallet: "C-Wallet",
+      coinex: "Coin-Ex"
+    };
+
+    let selected = null;
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      try { tg.setHeaderColor("#090806"); } catch (e) {}
+      try { tg.setBackgroundColor("#090806"); } catch (e) {}
+    }
+
+    const statusEl = document.getElementById("status");
+    const addressEl = document.getElementById("address");
+    const selectedName = document.getElementById("selectedName");
+
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
+
+    function send(payload) {
+      if (!tg || !tg.sendData) {
+        setStatus("افتح الصفحة من زر البوت داخل تيليجرام حتى تعمل الأزرار.");
+        return;
+      }
+      tg.sendData(JSON.stringify(payload));
+    }
+
+    document.querySelectorAll(".wallet").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".wallet").forEach(b => b.classList.remove("selected"));
+        button.classList.add("selected");
+        selected = button.dataset.currency;
+        selectedName.textContent = "المحفظة المحددة: " + names[selected];
+        setStatus("أدخل العنوان ثم اضغط حفظ / تعديل.");
+      });
+    });
+
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      if (!selected) {
+        setStatus("اختر نوع المحفظة أولاً.");
+        return;
+      }
+      const address = addressEl.value.trim();
+      if (address.length < 5 || address.length > 200) {
+        setStatus("تأكد من إدخال عنوان صحيح (5 إلى 200 حرف).");
+        return;
+      }
+      send({ action: "save", currency: selected, address: address });
+    });
+
+    document.getElementById("deleteBtn").addEventListener("click", () => {
+      if (!selected) {
+        setStatus("اختر المحفظة التي تريد حذف عنوانها.");
+        return;
+      }
+      if (confirm("هل تريد حذف عنوان " + names[selected] + "؟")) {
+        send({ action: "delete_one", currency: selected });
+      }
+    });
+
+    document.getElementById("viewBtn").addEventListener("click", () => {
+      send({ action: "view" });
+    });
+
+    document.getElementById("deleteAllBtn").addEventListener("click", () => {
+      if (confirm("سيتم حذف جميع عناوينك المحفوظة. هل أنت متأكد؟")) {
+        send({ action: "delete_all" });
+      }
+    });
+
+    document.getElementById("adminBtn").addEventListener("click", () => {
+      send({ action: "admin_stats" });
+    });
+  </script>
+</body>
+</html>
